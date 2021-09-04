@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import logo from './assets/img/My Logo.png';
+import './University.css';
 import axios from 'axios';
 
 function App() {
 
   const [countryName, setCountryName] = useState('')
+  const [universities, setUniversities] = useState([])
+
 
   const getUniversityList = () => { 
     axios.get(`http://universities.hipolabs.com/search?country=${countryName}`)
     .then(response => {
       console.log('response: ', response.data)
+      setUniversities(response.data)
     }) 
     .catch(error => {
       console.log('error: ', error)
@@ -23,27 +26,32 @@ function App() {
   }
  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="Amir Logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        Find your University
-        </a>
+    <div className="main-container">
+        <input type="text" onChange={getCountryName} className="search-box"></input>
 
-        <input type="text" onChange={getCountryName}></input>
-
-        <button onClick={getUniversityList}>
+        <button onClick={getUniversityList} className="search-btn">
           Get University List
         </button>
-      </header>
+
+        <div className="unilist-container-style">
+          <div>
+            {/* loop the result */}
+            { universities.map((eachUni, key) => ( 
+              <div key={key}>
+                {/* University Name */}
+                <span>{key+1}</span>
+                <p>{eachUni.name}</p>
+                {
+                  eachUni.web_pages.map((eachWebPage, key) => (
+                    <a href={eachWebPage} target="_blank" rel="noreferrer">{eachUni.web_pages}</a>
+                  ))
+                }
+              </div>
+              ))
+            }
+          </div>
+        </div>
+          
     </div>
   );
 }
